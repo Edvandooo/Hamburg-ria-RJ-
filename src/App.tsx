@@ -5,12 +5,14 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { BURGERS_DATA } from './data/burgers';
-import { BurgerItem, CartItem } from './types/burger';
+import { BurgerItem, CartItem, MenuItem } from './types/burger';
 import { Header } from './components/Header';
 import { HeroDisplay } from './components/HeroDisplay';
 import { ProductInfo } from './components/ProductInfo';
 import { SecondaryNav } from './components/SecondaryNav';
 import { BottomBar } from './components/BottomBar';
+import { DrinksInfiniteCarousel } from './components/DrinksInfiniteCarousel';
+import { CardapioSection } from './components/CardapioSection';
 import { CartDrawer } from './components/CartDrawer';
 import { MenuDrawer } from './components/MenuDrawer';
 import { ShareModal } from './components/ShareModal';
@@ -18,7 +20,7 @@ import { ShareModal } from './components/ShareModal';
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [activeTab, setActiveTab] = useState('BURGERS');
+  const [activeTab, setActiveTab] = useState('INÍCIO');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,8 +58,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNext, handlePrev, isCartOpen, isMenuOpen, isShareOpen]);
 
-  // Cart Management
-  const handleAddToCart = (burger: BurgerItem) => {
+  // Cart Management - Funciona tanto com BurgerItem quanto com MenuItem
+  const handleAddToCart = (burger: BurgerItem | MenuItem) => {
     setCart((prevCart) => {
       const existing = prevCart.find((item) => item.burger.id === burger.id);
       if (existing) {
@@ -94,51 +96,70 @@ export default function App() {
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <main className="min-h-screen w-full bg-[#080706] text-white flex flex-col justify-between relative overflow-hidden select-none font-body">
-      {/* Subtle central radial highlight for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,_rgba(28,25,23,0.5)_0%,_rgba(5,5,5,0.95)_100%)] pointer-events-none" />
+    <div className="w-full bg-[#080706] text-white relative font-body select-none">
+      {/* 
+        SEÇÃO 1: HERO PRINCIPAL EDITORIAL
+        Vitrine de impacto com nome gigante dinâmico atrás do hambúrguer
+      */}
+      <main className="h-screen min-h-[640px] max-h-[1080px] w-full flex flex-col justify-between relative overflow-hidden">
+        {/* Subtle central radial highlight for depth */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,_rgba(28,25,23,0.5)_0%,_rgba(5,5,5,0.95)_100%)] pointer-events-none" />
 
-      {/* 1. Header (Logo, Minimalist Nav, Hamburger & Control) */}
-      <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenMenu={() => setIsMenuOpen(true)}
-        onOpenCart={() => setIsCartOpen(true)}
-        cartCount={totalCartCount}
-        onShare={() => setIsShareOpen(true)}
-      />
+        {/* 1. Header (Logo Real Espartanos, Navegação em PT-BR, Pedir Agora & Controles) */}
+        <Header
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onOpenMenu={() => setIsMenuOpen(true)}
+          onOpenCart={() => setIsCartOpen(true)}
+          cartCount={totalCartCount}
+          onShare={() => setIsShareOpen(true)}
+        />
 
-      {/* 2. Main Hero Area (Giant "BURGERS" text + Centered Burger on cutting board with Fries) */}
-      <div className="relative flex-1 w-full h-full min-h-[520px] flex items-center justify-center">
-        <HeroDisplay
+        {/* 2. Main Hero Area (Nome Dinâmico do Hambúrguer atrás + Hambúrguer Intacto na frente) */}
+        <div className="relative flex-1 w-full h-full min-h-[480px] flex items-center justify-center">
+          <HeroDisplay
+            currentBurger={currentBurger}
+            direction={direction}
+          />
+
+          {/* 3. Product Info (Título real, ingredientes, preço em R$, botão Adicionar ao Carrinho) */}
+          <ProductInfo
+            burger={currentBurger}
+            onAddToCart={handleAddToCart}
+          />
+
+          {/* 4. Secondary Products Nav (Controles refinados e próximo hambúrguer flutuante) */}
+          <SecondaryNav
+            currentIndex={currentIndex}
+            total={total}
+            nextBurger={nextBurger}
+            onNext={handleNext}
+            onPrev={handlePrev}
+            onSelectNext={handleNext}
+          />
+        </div>
+
+        {/* 5. Bottom Bar (Micro-título, dots de paginação e dica para ver cardápio) */}
+        <BottomBar
           currentBurger={currentBurger}
-          direction={direction}
-        />
-
-        {/* 3. Product Info (Bottom-left title, micro-description, ADD TO BAG button) */}
-        <ProductInfo
-          burger={currentBurger}
-          onAddToCart={handleAddToCart}
-        />
-
-        {/* 4. Secondary Products Nav (Right side arrows & next burger preview thumbnail) */}
-        <SecondaryNav
           currentIndex={currentIndex}
           total={total}
-          nextBurger={nextBurger}
-          onNext={handleNext}
-          onPrev={handlePrev}
-          onSelectNext={handleNext}
+          onSelectIndex={handleSelectIndex}
         />
-      </div>
+      </main>
 
-      {/* 5. Bottom Bar (Micro-text & pagination dots only - no socials, no languages) */}
-      <BottomBar
-        currentBurger={currentBurger}
-        currentIndex={currentIndex}
-        total={total}
-        onSelectIndex={handleSelectIndex}
-      />
+      {/* 
+        SEÇÃO INTERMEDIÁRIA: CARROSSEL INFINITO DE BEBIDAS
+        Faixa contínua com Fanta, Coca-Cola, Império Lager e Pink Moon
+        em movimento linear suave e perpétuo da direita para a esquerda
+      */}
+      <DrinksInfiniteCarousel />
+
+      {/* 
+        SEÇÃO 2: CARDÁPIO VITRINE ESPARTANOS
+        Inspirada na referência: estruturada, rica, com produtos, acompanhamentos e combos reais
+      */}
+      <CardapioSection onAddToCart={handleAddToCart} />
 
       {/* Cart Slide-Over Drawer */}
       <CartDrawer
@@ -164,6 +185,7 @@ export default function App() {
         onClose={() => setIsShareOpen(false)}
         burger={currentBurger}
       />
-    </main>
+    </div>
   );
 }
+

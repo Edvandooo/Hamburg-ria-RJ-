@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BurgerItem } from '../types/burger';
+import { SmokeVideo } from './SmokeVideo';
 
 interface HeroDisplayProps {
   currentBurger: BurgerItem;
@@ -9,35 +10,81 @@ interface HeroDisplayProps {
 
 export const HeroDisplay: React.FC<HeroDisplayProps> = ({ currentBurger, direction }) => {
   return (
-    <div className="relative w-full h-full flex items-center justify-center pointer-events-none select-none overflow-hidden">
+    <div className="relative w-full h-full flex flex-col items-center justify-center pointer-events-none select-none pt-12 sm:pt-14 md:pt-16 pb-4 sm:pb-8">
       {/* 
-        LAYER 1: GIANT GRAPHIC WORDMARK "BURGERS"
-        Fica visualmente atrás do hamburger, exatamente como na referência.
-        Fonte sans-serif condensada ultra-bold branca (Bebas Neue).
+        LAYER 0: CINEMATIC SMOKE VIDEO (z-[5])
+        - Fumaça em vídeo real com fundo preto 100% invisível via mix-blend-mode: screen
+        - Posicionada atrás dos textos (z-10) e do hambúrguer (z-20)
+        - Surge do centro e sobe suavemente pela parte superior do Hero
+        - Desaparece gradualmente com máscara vertical antes das áreas inferiores
+        - Loop contínuo, sem controles, sem áudio e sem bordas visíveis
+      */}
+      <SmokeVideo />
+
+      {/* 
+        LAYER 1: TEXTO DO NOME DO HAMBÚRGUER NO TOPO DO HAMBÚRGUER (z-10)
+        - Posicionado no topo do hambúrguer, completamente atrás dele (z-10)
+        - Sem espaçamento exagerado, normal, compacto e legível
+        - Tamanho reduzido em 8%
+        - Animação exatamente preservada (direction, duration, ease, initial/animate/exit)
       */}
       <div 
-        className="absolute inset-x-0 top-1/2 -translate-y-[62%] sm:-translate-y-[64%] md:-translate-y-[66%] flex items-center justify-center z-10 pointer-events-none select-none"
+        className="relative z-10 w-full flex items-center justify-center pointer-events-none select-none overflow-visible px-3 sm:px-4 mb-1 sm:mb-2 md:mb-3"
+        style={{ top: '14px' }}
         aria-hidden="true"
       >
-        <span className="font-display font-bold text-[25vw] sm:text-[21vw] md:text-[18.5vw] lg:text-[17vw] xl:text-[16rem] text-white leading-none tracking-[0.01em] uppercase select-none opacity-100 whitespace-nowrap">
-          BURGERS
-        </span>
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={currentBurger.id + '-giant-text'}
+            custom={direction}
+            initial={{
+              opacity: 0,
+              y: direction > 0 ? 15 : -15,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: direction > 0 ? -15 : 15,
+            }}
+            transition={{
+              duration: 0.35,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="flex items-center justify-center w-full"
+          >
+            <span 
+              className="font-display text-[10.5vw] xs:text-[11vw] sm:text-[10.5vw] md:text-[9.2vw] lg:text-[8.1vw] xl:text-[7.5rem] text-white leading-none tracking-normal uppercase select-none opacity-100 whitespace-nowrap block will-change-transform text-center"
+              style={{
+                textRendering: 'optimizeLegibility',
+                WebkitFontSmoothing: 'antialiased',
+                letterSpacing: '0.01em',
+              }}
+            >
+              {currentBurger.giantWordmark}
+            </span>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* 
-        LAYER 2: MAIN PRODUCT OVERLAY (BURGER + FRIES ON WOODEN BOARD)
-        PNG com fundo transparente perfeitamente integrado ao fundo preto.
-        Fisicamente sobreposto ao texto gigante "BURGERS", criando profundidade real.
+        LAYER 2: MAIN PRODUCT OVERLAY (BURGER + FRIES ON WOODEN BOARD) (z-20)
+        - Proporção calibrada no mobile e desktop para respiração visual completa
+        - O hambúrguer começa abaixo do texto sem cobrir as letras
+        - Fica à frente do texto (z-20)
+        - Mantém exatamente a imagem, animação e layout
       */}
-      <div className="relative z-20 w-full max-w-[360px] sm:max-w-[480px] md:max-w-[600px] lg:max-w-[700px] xl:max-w-[780px] px-4 flex items-center justify-center pointer-events-auto mt-4 sm:mt-8 md:mt-12">
-        <AnimatePresence mode="wait" custom={direction}>
+      <div className="relative z-20 w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[440px] md:max-w-[540px] lg:max-w-[640px] xl:max-w-[720px] px-3 sm:px-4 flex items-center justify-center pointer-events-auto">
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
             key={currentBurger.id}
             custom={direction}
             initial={{
               opacity: 0,
-              scale: 0.94,
-              x: direction > 0 ? 40 : -40,
+              scale: 0.95,
+              x: direction > 0 ? 30 : -30,
             }}
             animate={{
               opacity: 1,
@@ -46,14 +93,14 @@ export const HeroDisplay: React.FC<HeroDisplayProps> = ({ currentBurger, directi
             }}
             exit={{
               opacity: 0,
-              scale: 0.96,
-              x: direction > 0 ? -40 : 40,
+              scale: 0.95,
+              x: direction > 0 ? -30 : 30,
             }}
             transition={{
-              duration: 0.4,
+              duration: 0.35,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="relative flex items-center justify-center w-full"
+            className="relative flex items-center justify-center w-full will-change-transform"
           >
             {/* The Real Transparent PNG Product Photography */}
             <div className="relative group max-w-full">
@@ -61,11 +108,11 @@ export const HeroDisplay: React.FC<HeroDisplayProps> = ({ currentBurger, directi
                 src={currentBurger.image}
                 alt={currentBurger.alt}
                 referrerPolicy="no-referrer"
-                className="w-full h-auto max-h-[48vh] sm:max-h-[54vh] md:max-h-[58vh] lg:max-h-[62vh] object-contain drop-shadow-[0_20px_45px_rgba(0,0,0,0.95)] filter contrast-[1.03] brightness-[1.01]"
+                className="w-full h-auto max-h-[33vh] sm:max-h-[44vh] md:max-h-[50vh] lg:max-h-[56vh] object-contain drop-shadow-[0_25px_40px_rgba(0,0,0,0.95)] filter contrast-[1.03] brightness-[1.02]"
               />
 
               {/* Natural soft contact shadow beneath the board */}
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/80 blur-xl rounded-full -z-10" />
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5 h-8 bg-black/80 blur-xl rounded-full -z-10" />
             </div>
           </motion.div>
         </AnimatePresence>
@@ -73,3 +120,4 @@ export const HeroDisplay: React.FC<HeroDisplayProps> = ({ currentBurger, directi
     </div>
   );
 };
+

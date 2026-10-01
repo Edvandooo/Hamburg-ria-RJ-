@@ -27,12 +27,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, burger 
         <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
           <div className="flex items-center gap-2">
             <Share2 className="w-4 h-4 text-[#f99619]" />
-            <h3 className="font-bold text-sm tracking-wider uppercase">SHARE PRODUCT</h3>
+            <h3 className="font-bold text-sm tracking-wider uppercase">COMPARTILHAR</h3>
           </div>
           <button
             onClick={onClose}
             className="text-neutral-400 hover:text-white p-1"
-            aria-label="Close share dialog"
+            aria-label="Fechar compartilhamento"
           >
             <X className="w-4 h-4" />
           </button>
@@ -40,7 +40,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, burger 
 
         <div className="py-4 space-y-3">
           <p className="text-xs text-neutral-300">
-            Share <span className="font-bold text-white">{burger.titleLine1} {burger.titleLine2}</span> with friends.
+            Compartilhe <span className="font-bold text-white">{burger.titleLine1} {burger.titleLine2}</span> com seus amigos.
           </p>
 
           <div className="flex items-center gap-2 bg-neutral-950 p-2 rounded-lg border border-neutral-800">
@@ -57,12 +57,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, burger 
               {copied ? (
                 <>
                   <Check className="w-3 h-3" />
-                  <span>COPIED</span>
+                  <span>COPIADO</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3 h-3" />
-                  <span>COPY</span>
+                  <span>COPIAR</span>
                 </>
               )}
             </button>
