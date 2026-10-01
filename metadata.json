@@ -1,0 +1,6 @@
+{
+  "name": "BULL & BUN Artisanal Burgers",
+  "description": "Editorial craft burger landing page featuring signature fried chicken burger, rustic fries, interactive carousel, and high-impact visual typography.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
